@@ -1,0 +1,91 @@
+id: ucla_profile_importer
+label: 'Import UCLA Profiles'
+status: true
+
+#change to JSON
+source:
+  plugin: url
+  data_fetcher_plugin: http
+  urls: 'https://json.api.researcherprofiles.org/ucla.researcherprofiles.org/christopher.denny?application=manual&email=xxxxx@xxxxxx.com'
+  data_parser_plugin: json
+  skip_count: TRUE
+  item_selector: /
+  fields:
+    -
+      name: internalUri
+      label: 'ID'
+      selector: internalUri
+    -
+      name: profileUrl
+      label: 'URL'
+      selector: profileUrl
+    -
+      name: nameFirst
+      label: 'First name'
+      selector: nameFirst
+    -
+      name: nameLast
+      label: 'Last Name'
+      selector: nameLast
+    -
+      name: titlePrimary
+      label: 'Primary Title'
+      selector: titlePrimary
+    -
+      name: publications
+      label: 'Publications'
+      selector: publications
+    -
+      name: bio
+      label: 'Biography'
+      selector: bio
+    -
+      name: keywordsFromResearch
+      label: 'Keywords from Research'
+      selector: keywordsFromResearch
+    -
+      name: email
+      label: 'Email Address'
+      selector: email
+
+  ids:
+    internalUri:
+      type: string
+
+destination:
+  plugin: 'entity:node'
+
+process:
+  uid:
+    plugin: default_value
+    default_value: 1
+  status:
+    plugin: default_value
+    default_value: 1
+  type:
+    plugin: default_value
+    default_value: sf_person
+  publications:
+    plugin: uclahs_publications
+    source: publications
+  body:
+    plugin: concat
+    source:
+      - bio
+      - '@publications'
+  field_sf_websites/uri:
+    plugin: str_replace
+    source: profileUrl
+    search: 'ucla.researcherprofiles.org'
+    replace: 'profiles.ucla.edu'
+  field_sf_websites/title:
+    plugin: default_value
+    default_value: 'View Profile'
+  field_sf_emails: email
+  field_sf_tags:
+    plugin: entity_generate
+    source: keywordsFromResearch
+    value_key: name
+    ignore_case: true
+
+

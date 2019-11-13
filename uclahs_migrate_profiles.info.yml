@@ -1,0 +1,7 @@
+name: 'UCLAHS Migrate Profiles'
+type: module
+description: 'Migration of UCLA Health System Profiles'
+core: 8.x
+package: 'UCLAHS'
+dependencies:
+  - migrate_plus
