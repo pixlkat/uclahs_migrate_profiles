@@ -9,7 +9,7 @@ source:
   urls: 'https://json.api.researcherprofiles.org/ucla.researcherprofiles.org/christopher.denny?application=manual&email=xxxxx@xxxxxx.com'
   data_parser_plugin: json
   skip_count: TRUE
-  item_selector: /
+  item_selector: false
   fields:
     -
       name: internalUri
@@ -47,6 +47,10 @@ source:
       name: email
       label: 'Email Address'
       selector: email
+    -
+      name: phoneNumber
+      label: 'Phone Number'
+      selector: phoneNumber
 
   ids:
     internalUri:
@@ -68,11 +72,14 @@ process:
   publications:
     plugin: uclahs_publications
     source: publications
-  body:
+  body/value:
     plugin: concat
     source:
       - bio
       - '@publications'
+  body/format:
+    plugin: default_value
+    default_value: sf_basic_html
   field_sf_websites/uri:
     plugin: str_replace
     source: profileUrl
@@ -87,5 +94,9 @@ process:
     source: keywordsFromResearch
     value_key: name
     ignore_case: true
+  field_sf_last_name: nameLast
+  field_sf_first_name: nameFirst
+  field_sf_position_title: titlePrimary
+  field_sf_phone_numbers: phoneNumber
 
 
